@@ -185,6 +185,8 @@ window.__scRegister = cb => {
 };
 window.__scSaved = n => { saved = n; $('count').textContent = `已存 ${n} 張`; toast('已存入相簿'); };
 window.__scError = m => toast('存檔失敗：' + m);
+// Scriptable 在背景定位後，把位置傳進來
+window.__scLoc = (lat, lng, acc) => { pos = { lat, lng, acc: acc || 0, t: Date.now() }; };
 function deliver(dataUrl) {
   if (pendingCb) { const c = pendingCb; pendingCb = null; c(dataUrl); } else queue.push(dataUrl);
 }
