@@ -55,6 +55,15 @@
     font-family: inherit; background: var(--stamp); color: #fff; }
   button:focus-visible { outline: 3px solid var(--stamp); outline-offset: 2px; }
   canvas { display: none; }
+
+  /* 橫拿手機：快門移到右邊，畫面避開動態島 */
+  @media (orientation: landscape) {
+    .app { flex-direction: row; }
+    .viewer { margin-left: env(safe-area-inset-left, 0px); }
+    .bar { grid-template-columns: 1fr; grid-template-rows: 1fr auto 1fr; justify-items: center;
+      padding: 12px calc(16px + env(safe-area-inset-right, 0px)) 12px 16px; }
+    .count { align-self: start; writing-mode: horizontal-tb; }
+  }
 </style>
 </head>
 <body>
@@ -187,6 +196,7 @@ window.__scRegister = cb => {
 // Scriptable 每隔一下來拿照片（沒有就回傳空字串）
 window.__scTake = () => { inScriptable = true; return queue.length ? queue.shift() : ''; };
 window.__scLocErr = m => { if (!pos) $('gpsText').textContent = '定位失敗：' + m; };
+window.__scLocStatus = m => { if (!pos) $('gpsText').textContent = m; };
 window.__scSaved = n => { saved = n; $('count').textContent = `已存 ${n} 張`; toast('已存入相簿'); };
 window.__scError = m => toast('存檔失敗：' + m);
 // Scriptable 在背景定位後，把位置傳進來
