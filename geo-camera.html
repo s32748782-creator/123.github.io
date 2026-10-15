@@ -87,6 +87,7 @@ const SIZE = 0.045;
 // ---------- 持續定位 ----------
 let pos = null; // { lat, lng, acc, t }
 function startGPS() {
+  if (window.__inScriptable) return; // 在 Scriptable 裡由它負責定位，網頁不用自己問權限
   if (!navigator.geolocation) { $('gpsText').textContent = '這裡不支援定位'; return; }
   navigator.geolocation.watchPosition(p => {
     pos = { lat: p.coords.latitude, lng: p.coords.longitude, acc: p.coords.accuracy, t: Date.now() };
@@ -183,6 +184,9 @@ window.__scRegister = cb => {
   inScriptable = true;
   if (queue.length) cb(queue.shift()); else pendingCb = cb;
 };
+// Scriptable 每隔一下來拿照片（沒有就回傳空字串）
+window.__scTake = () => { inScriptable = true; return queue.length ? queue.shift() : ''; };
+window.__scLocErr = m => { if (!pos) $('gpsText').textContent = '定位失敗：' + m; };
 window.__scSaved = n => { saved = n; $('count').textContent = `已存 ${n} 張`; toast('已存入相簿'); };
 window.__scError = m => toast('存檔失敗：' + m);
 // Scriptable 在背景定位後，把位置傳進來
